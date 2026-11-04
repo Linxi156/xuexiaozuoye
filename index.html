@@ -1466,12 +1466,16 @@ body{display:flex;align-items:center;justify-content:center;background:radial-gr
   const staticMode = params.has('static');
   if(staticMode) frame.classList.add('no-anim');
 
-  // 自动播放：进入即试；被策略拦下时，手指移动/触屏/按键/滚轮都会再试一次
-  ['pointermove','touchstart','keydown','wheel'].forEach(ev=>{
+  // 自动播放：进入即试；被策略拦下时，任意手势都会再试一次
+  // iOS Safari / 微信只认 touchend、click 这类「完整手势」，所以这里要覆盖全
+  ['pointerdown','pointerup','pointermove','touchstart','touchend','click','keydown','wheel'].forEach(ev=>{
     document.addEventListener(ev, ()=>{ if(!bgmOn && !muted) tryAutoBGM(); }, {passive:true});
   });
   window.addEventListener('pageshow', tryAutoBGM);
   document.addEventListener('visibilitychange', ()=>{ if(!document.hidden) tryAutoBGM(); });
+  // 部分机型首次 play() 会先返回 pending，等元数据就绪后再补一次
+  bgm.addEventListener('loadeddata', ()=>{ if(!bgmOn && !muted) tryAutoBGM(); });
+  if(bgm.readyState >= 2){ tryAutoBGM(); } else { bgm.addEventListener('canplay', tryAutoBGM, {once:true}); }
   tryAutoBGM();
 
   // 手机长按不再弹出「复制 / 选中文字 / 放大镜 / 系统菜单」，避免挡住交互
