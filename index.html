@@ -584,7 +584,7 @@ body{display:flex;align-items:center;justify-content:center;background:radial-gr
 
     <!-- 02 梧桐道 -->
     <section class="page p-path" id="pPath">
-      <div class="bg"><img src="assets/bg_path.webp" alt="清晨梧桐道插画"></div>
+      <div class="bg"><img data-src="assets/bg_path.webp" alt="清晨梧桐道插画" decoding="async"></div>
       <div class="veil"></div>
       <div class="leaf-chip"><b id="leafNum">0</b><span>片落叶</span></div>
       <div class="content">
@@ -603,7 +603,7 @@ body{display:flex;align-items:center;justify-content:center;background:radial-gr
 
     <!-- 03 教室 -->
     <section class="page p2" id="p2">
-      <div class="bg"><img src="assets/bg2.webp" alt="晨光中的教室插画"></div>
+      <div class="bg"><img data-src="assets/bg2.webp" alt="晨光中的教室插画" decoding="async"></div>
       <div class="veil"></div>
       <div class="sun-ray"></div>
       <span class="dust" style="left:20%;top:56%;animation-delay:.4s"></span>
@@ -641,7 +641,7 @@ body{display:flex;align-items:center;justify-content:center;background:radial-gr
 
     <!-- 04 走廊 -->
     <section class="page p-hall" id="pHall">
-      <div class="bg"><img src="assets/bg_hall.webp" alt="教学楼走廊插画"></div>
+      <div class="bg"><img data-src="assets/bg_hall.webp" alt="教学楼走廊插画" decoding="async"></div>
       <div class="veil"></div>
       <div class="content">
         <div class="kicker reveal" style="--d:.1s">10:10 · 走廊</div>
@@ -660,7 +660,7 @@ body{display:flex;align-items:center;justify-content:center;background:radial-gr
 
     <!-- 05 食堂 -->
     <section class="page p-canteen" id="pCanteen">
-      <div class="bg"><img src="assets/bg_canteen.webp" alt="正午食堂插画"></div>
+      <div class="bg"><img data-src="assets/bg_canteen.webp" alt="正午食堂插画" decoding="async"></div>
       <div class="veil"></div>
       <div class="content">
         <div class="kicker reveal" style="--d:.1s">12:30 · 食堂</div>
@@ -686,7 +686,7 @@ body{display:flex;align-items:center;justify-content:center;background:radial-gr
 
     <!-- 06 操场 -->
     <section class="page p3" id="p3">
-      <div class="bg"><img src="assets/bg3.webp" alt="午后操场的插画"></div>
+      <div class="bg"><img data-src="assets/bg3.webp" alt="午后操场的插画" decoding="async"></div>
       <div class="veil"></div>
       <div class="score-chip"><b id="scoreNum">0</b><span>进球</span></div>
       <div class="content">
@@ -702,7 +702,7 @@ body{display:flex;align-items:center;justify-content:center;background:radial-gr
 
     <!-- 07 图书馆 -->
     <section class="page p-library" id="pLibrary">
-      <div class="bg"><img src="assets/bg_library.webp" alt="午后图书馆插画"></div>
+      <div class="bg"><img data-src="assets/bg_library.webp" alt="午后图书馆插画" decoding="async"></div>
       <div class="veil"></div>
       <div class="content">
         <div class="kicker reveal" style="--d:.1s">16:40 · 图书馆</div>
@@ -728,7 +728,7 @@ body{display:flex;align-items:center;justify-content:center;background:radial-gr
 
     <!-- 08 天台 · 黄昏 -->
     <section class="page p4" id="p4">
-      <div class="bg"><img src="assets/bg4.webp" alt="黄昏天台的插画"></div>
+      <div class="bg"><img data-src="assets/bg4.webp" alt="黄昏天台的插画" decoding="async"></div>
       <div class="veil"></div>
       <div class="dusk-veil" id="duskVeil"></div>
       <div class="sun-deco" id="sunDeco"></div>
@@ -753,7 +753,7 @@ body{display:flex;align-items:center;justify-content:center;background:radial-gr
 
     <!-- 05 星夜 -->
     <section class="page p5" id="p5">
-      <div class="bg"><img src="assets/bg5.webp" alt="夜晚校园星空插画"></div>
+      <div class="bg"><img data-src="assets/bg5.webp" alt="夜晚校园星空插画" decoding="async"></div>
       <div class="veil"></div>
       <button class="star" data-i="1" data-noswipe style="left:19%;top:16%;animation-delay:0s" aria-label="点亮第一颗星"></button>
       <button class="star" data-i="2" data-noswipe style="left:60%;top:9%;animation-delay:.9s" aria-label="点亮第二颗星"></button>
@@ -1031,8 +1031,18 @@ body{display:flex;align-items:center;justify-content:center;background:radial-gr
   const dots = Array.from(dotsBox.children);
 
   /* ---------- 翻页 ---------- */
+  /* ---------- 背景图懒加载：只预取当前幕前后各一张 ---------- */
+  const bgMap = {};
+  pages.forEach((p,i)=>{ const im = p.querySelector('.bg img[data-src]'); if(im) bgMap[i] = im; });
+  function loadBg(n){
+    for(let i=n-1;i<=n+1;i++){
+      const el = bgMap[i];
+      if(el && el.dataset.src){ el.src = el.dataset.src; delete el.dataset.src; }
+    }
+  }
   function setPage(n, instant){
     index = n;
+    loadBg(n);
     pages.forEach((p,i)=>{
       p.classList.toggle('active', i===n);
       p.classList.toggle('past', i<n);
