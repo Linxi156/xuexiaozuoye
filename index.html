@@ -104,8 +104,19 @@ body{display:flex;align-items:center;justify-content:center;background:radial-gr
 .kicker::before{content:"";width:20px;height:1px;background:currentColor;opacity:.55;flex:none}
 .title{font-size:clamp(30px,8.4vw,38px);font-weight:600;letter-spacing:.06em;line-height:1.32;color:var(--ink)}
 .lead{margin-top:14px;font-size:13.5px;line-height:2.05;letter-spacing:.02em;color:rgba(34,51,43,.7);max-width:19em}
-.hint{margin-top:18px;font-size:10.5px;letter-spacing:.14em;color:var(--mint-deep);display:flex;align-items:center;gap:7px}
-.hint::after{content:"";width:16px;height:1px;background:currentColor;opacity:.6;animation:lineGrow 2.2s ease-in-out infinite}
+.hint{margin-top:20px;font-size:13px;font-weight:500;letter-spacing:.08em;color:var(--ink);
+  display:inline-flex;align-items:center;gap:9px;padding:10px 16px;border-radius:100px;
+  background:rgba(255,253,246,.9);border:1px solid rgba(94,146,130,.4);
+  box-shadow:0 8px 20px rgba(32,50,44,.12);
+  -webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px)}
+.hint::before{content:"";width:8px;height:8px;border-radius:50%;background:var(--mint-deep);flex:none;
+  box-shadow:0 0 0 0 rgba(94,146,130,.55);animation:hintPulse 1.9s ease-out infinite}
+.hint::after{content:"→";font-size:12px;opacity:.5;letter-spacing:0}
+@keyframes hintPulse{
+  0%{box-shadow:0 0 0 0 rgba(94,146,130,.5)}
+  70%{box-shadow:0 0 0 7px rgba(94,146,130,0)}
+  100%{box-shadow:0 0 0 0 rgba(94,146,130,0)}
+}
 
 .reveal{opacity:0}
 .page.active .reveal{animation:rise .95s cubic-bezier(.2,.72,.2,1) var(--d,0s) both}
@@ -255,7 +266,8 @@ body{display:flex;align-items:center;justify-content:center;background:radial-gr
 .p5 .kicker{color:rgba(247,238,220,.66)}
 .p5 .title{color:#FBF4E6;font-size:clamp(27px,7.4vw,33px);line-height:1.36}
 .p5 .lead{color:rgba(247,238,220,.68);max-width:15em}
-.p5 .hint{color:rgba(233,198,133,.9)}
+.p5 .hint{color:#FBF4E6;background:rgba(255,255,255,.12);border-color:rgba(233,198,133,.5)}
+.p5 .hint::before{background:var(--gold);box-shadow:0 0 0 0 rgba(233,198,133,.5)}
 .star{position:absolute;width:46px;height:46px;z-index:9;padding:0;
   display:flex;align-items:center;justify-content:center}
 .star::before{content:"";width:15px;height:15px;
@@ -388,6 +400,19 @@ body{display:flex;align-items:center;justify-content:center;background:radial-gr
   background:radial-gradient(120% 120% at 25% 25%,rgba(248,243,231,.9),rgba(248,243,231,.55) 55%,rgba(248,243,231,0) 82%)}
 .p-library .content .kicker,.p-library .content .title,.p-library .content .lead,.p-library .content .hint{
   text-shadow:0 1px 14px rgba(255,252,240,.95),0 0 5px rgba(255,252,240,.7)}
+/* 交互提示条自带底色，不需要文字阴影，避免边缘发糊 */
+.p-path .content .hint,.p-hall .content .hint,.p-canteen .content .hint,.p-library .content .hint{
+  text-shadow:none}
+
+/* 音乐开启提示 */
+.sound-tip{position:absolute;left:50%;bottom:calc(108px + env(safe-area-inset-bottom));transform:translate(-50%,8px);
+  z-index:30;display:inline-flex;align-items:center;gap:8px;padding:9px 16px;border-radius:100px;
+  font-size:12px;letter-spacing:.1em;color:var(--ink);background:rgba(255,253,246,.94);
+  border:1px solid rgba(94,146,130,.4);box-shadow:0 10px 24px rgba(32,50,44,.16);
+  opacity:0;visibility:hidden;transition:opacity .4s,transform .4s,visibility .4s}
+.sound-tip.on{opacity:1;visibility:visible;transform:translate(-50%,0)}
+.sound-tip::before{content:"";width:7px;height:7px;border-radius:50%;background:var(--terra);
+  animation:hintPulse 1.8s ease-out infinite}
 .library-ui{position:absolute;left:24px;right:24px;bottom:calc(26px + env(safe-area-inset-bottom));z-index:9}
 .books{display:flex;gap:9px;align-items:flex-end;justify-content:center;height:200px}
 .book-spine{flex:1;max-width:88px;height:100%;position:relative;padding:0;border:0;background:none;
@@ -771,8 +796,8 @@ body{display:flex;align-items:center;justify-content:center;background:radial-gr
         <p class="quote reveal" style="--d:.9s">把普通的日子，过成自己喜欢的样子。</p>
         <div class="author reveal" style="--d:.96s">
           <div class="aw"><span>姓名 NAME</span><b id="authorName">林康</b></div>
-          <div class="aw"><span>班级 CLASS</span><b id="authorClass">—</b></div>
-          <div class="aw"><span>学号 ID</span><b id="authorNo">—</b></div>
+          <div class="aw"><span>班级 CLASS</span><b id="authorClass">数字媒体技术</b></div>
+          <div class="aw"><span>学号 ID</span><b id="authorNo">230621113</b></div>
         </div>
         <div class="teaser reveal" style="--d:.98s"><i></i>明天 06:40 · 校门还会再开一次</div>
         <div class="cta reveal" style="--d:1s">
@@ -786,6 +811,7 @@ body{display:flex;align-items:center;justify-content:center;background:radial-gr
   </main>
 
   <div class="swipe-hint" id="swipeHint"><span>向上滑动</span><i></i></div>
+  <div class="sound-tip" id="soundTip">轻触屏幕 · 开启背景音乐</div>
   <audio id="bgm" src="assets/bgm.mp3" loop preload="none"></audio>
 </div>
 
@@ -966,14 +992,18 @@ body{display:flex;align-items:center;justify-content:center;background:radial-gr
     if(muted || bgmOn) return;
     try{ bgm.loop = true; bgm.volume = bgmLevel(); }catch(e){}
     const p = bgm.play();
-    if(p && p.then) p.then(()=>{ bgmOn = true; }).catch(()=>{ bgmOn = false; });
-    else bgmOn = true;
+    if(p && p.then) p.then(()=>{ bgmOn = true; hideSoundTip(); }).catch(()=>{ bgmOn = false; });
+    else { bgmOn = true; hideSoundTip(); }
   }
+  // 若 2 秒后仍未播放，弹一条「轻触屏幕开启音乐」，播成功后自动收起
+  const soundTip = document.getElementById('soundTip');
+  function hideSoundTip(){ if(soundTip) soundTip.classList.remove('on'); }
+  setTimeout(()=>{ if(!bgmOn && !muted && soundTip) soundTip.classList.add('on'); }, 2000);
   function toggleSound(){
     muted = !muted;
     frame.classList.toggle('muted', muted);
-    if(muted){ try{ bgm.pause(); }catch(e){}; stopAmbience(); }
-    else { sfx.toggle(); bgmOn = false; startBGM(); setAmbience(index); }
+    if(muted){ try{ bgm.pause(); }catch(e){}; stopAmbience(); hideSoundTip(); }
+    else { sfx.toggle(); bgmOn = false; startBGM(); setAmbience(index); hideSoundTip(); }
   }
   document.getElementById('soundBtn').addEventListener('click', e=>{
     e.stopPropagation();
