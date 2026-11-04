@@ -896,10 +896,12 @@ body{display:flex;align-items:center;justify-content:center;background:radial-gr
   Object.keys(AMB_SRC).forEach(k=>{
     const a = new Audio(AMB_SRC[k]);
     a.loop = true;
-    a.preload = 'auto';
+    a.preload = 'metadata';   // 只先取头部，别让 7 段环境音同时抢带宽
     a.volume = 0;
     amb[k] = a;
   });
+  // 首屏要用的两段提前加载，其余切换场景时按需拉取
+  ['morning','class'].forEach(k=>{ try{ amb[k].preload = 'auto'; amb[k].load(); }catch(e){} });
   let ambKey = null, audioUnlocked = false, bellPlayed = false;
   function fadeVol(a, target, dur, pauseAtEnd){
     clearInterval(a._fade);
@@ -922,6 +924,7 @@ body{display:flex;align-items:center;justify-content:center;background:radial-gr
       if(k !== key && amb[k].volume > 0) fadeVol(amb[k], 0, 700, true);
     });
     const a = amb[key];
+    if(a.preload !== 'auto'){ try{ a.preload = 'auto'; a.load(); }catch(e){} }
     a.volume = 0;
     try{
       const pr = a.play();
