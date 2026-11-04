@@ -977,8 +977,8 @@ body{display:flex;align-items:center;justify-content:center;background:radial-gr
   function vibrate(ms){ try{ if(navigator.vibrate) navigator.vibrate(ms); }catch(e){} }
 
   const bgmVolInput = document.getElementById('bgmVol');
-  // 音量上限压到原来的 1/3，初始值随之更低
-  function bgmLevel(){ return Math.max(0, Math.min(1, (+bgmVolInput.value) / 100)) * 0.34; }
+  // 音量上限为原始设计的 60%（默认滑杆 90 → 0.54）
+  function bgmLevel(){ return Math.max(0, Math.min(1, (+bgmVolInput.value) / 100)) * 0.6; }
   bgmVolInput.addEventListener('input', ()=>{
     try{ bgm.volume = bgmLevel(); }catch(e){}
   });
