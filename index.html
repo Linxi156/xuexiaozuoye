@@ -409,7 +409,7 @@ body{display:flex;align-items:center;justify-content:center;background:radial-gr
   z-index:30;display:inline-flex;align-items:center;gap:8px;padding:9px 16px;border-radius:100px;
   font-size:12px;letter-spacing:.1em;color:var(--ink);background:rgba(255,253,246,.94);
   border:1px solid rgba(94,146,130,.4);box-shadow:0 10px 24px rgba(32,50,44,.16);
-  opacity:0;visibility:hidden;transition:opacity .4s,transform .4s,visibility .4s}
+  opacity:0;visibility:hidden;transition:opacity .4s,transform .4s,visibility .4s;pointer-events:none}
 .sound-tip.on{opacity:1;visibility:visible;transform:translate(-50%,0)}
 .sound-tip::before{content:"";width:7px;height:7px;border-radius:50%;background:var(--terra);
   animation:hintPulse 1.8s ease-out infinite}
@@ -812,7 +812,7 @@ body{display:flex;align-items:center;justify-content:center;background:radial-gr
 
   <div class="swipe-hint" id="swipeHint"><span>向上滑动</span><i></i></div>
   <div class="sound-tip" id="soundTip">轻触屏幕 · 开启背景音乐</div>
-  <audio id="bgm" src="assets/bgm.mp3" loop preload="none"></audio>
+  <audio id="bgm" src="assets/bgm.mp3" loop preload="auto" playsinline></audio>
 </div>
 
 <script>
@@ -1499,7 +1499,10 @@ body{display:flex;align-items:center;justify-content:center;background:radial-gr
   // 自动播放：进入即试；被策略拦下时，任意手势都会再试一次
   // iOS Safari / 微信只认 touchend、click 这类「完整手势」，所以这里要覆盖全
   ['pointerdown','pointerup','pointermove','touchstart','touchend','click','keydown','wheel'].forEach(ev=>{
-    document.addEventListener(ev, ()=>{ if(!bgmOn && !muted) tryAutoBGM(); }, {passive:true});
+    document.addEventListener(ev, ()=>{
+      if(!muted) hideSoundTip();          // 任意一次触摸都收起提示，绝不挡住操作
+      if(!bgmOn && !muted) tryAutoBGM();
+    }, {passive:true});
   });
   window.addEventListener('pageshow', tryAutoBGM);
   document.addEventListener('visibilitychange', ()=>{ if(!document.hidden) tryAutoBGM(); });
